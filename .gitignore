@@ -1,0 +1,28 @@
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+tmp/
+
+# Local test/output directories
+dist/
+coverage/
