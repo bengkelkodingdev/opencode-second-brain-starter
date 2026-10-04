@@ -42,13 +42,13 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $testRoot = Join-Path $env:RUNNER_TEMP 'second-brain-test'
           $bin = Join-Path $testRoot 'bin'
-          $home = Join-Path $testRoot 'home'
+          $testHome = Join-Path $testRoot 'home'
           $vault = Join-Path $testRoot 'Vault With Spaces [CI]'
-          New-Item -ItemType Directory -Force -Path @($bin, $home, $vault) | Out-Null
+          New-Item -ItemType Directory -Force -Path @($bin, $testHome, $vault) | Out-Null
           Set-Content -LiteralPath (Join-Path $bin 'opencode.cmd') -Value '@exit /b 0' -Encoding Ascii
           $env:PATH = "$bin;$env:PATH"
-          $env:HOME = $home
-          $env:XDG_CONFIG_HOME = Join-Path $home '.config'
+          $env:HOME = $testHome
+          $env:XDG_CONFIG_HOME = Join-Path $testHome '.config'
           $env:SECOND_BRAIN_NAME = 'CI PowerShell'
           $env:SECOND_BRAIN_VAULT = $vault
           .\install.ps1
