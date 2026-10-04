@@ -100,15 +100,18 @@ function Write-AtomicText([string]$Path, [string]$Content) {
     $directory = [IO.Path]::GetDirectoryName($fullPath)
     New-SafeDirectory $directory
     $temporary = Join-Path $directory ('.second-brain-core.' + [Guid]::NewGuid().ToString('N'))
+    $replacementBackup = Join-Path $directory ('.second-brain-core-backup.' + [Guid]::NewGuid().ToString('N'))
     try {
         [IO.File]::WriteAllText($temporary, $Content, $script:Utf8NoBom)
         if ([IO.File]::Exists($fullPath)) {
-            [IO.File]::Replace($temporary, $fullPath, $null)
+            [IO.File]::Replace($temporary, $fullPath, $replacementBackup)
+            [IO.File]::Delete($replacementBackup)
         } else {
             [IO.File]::Move($temporary, $fullPath)
         }
     } finally {
         if (Test-Path -LiteralPath $temporary) { Remove-Item -LiteralPath $temporary -Force }
+        if (Test-Path -LiteralPath $replacementBackup) { Remove-Item -LiteralPath $replacementBackup -Force }
     }
 }
 
