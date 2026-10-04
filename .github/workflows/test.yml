@@ -1,0 +1,60 @@
+name: Test installers
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  bash:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Bash lifecycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          test_root=$(mktemp -d)
+          mkdir -p "$test_root/bin" "$test_root/home" "$test_root/Vault With Spaces"
+          printf '#!/usr/bin/env bash\nexit 0\n' > "$test_root/bin/opencode"
+          chmod +x "$test_root/bin/opencode"
+          export PATH="$test_root/bin:$PATH"
+          export HOME="$test_root/home"
+          export XDG_CONFIG_HOME="$test_root/home/.config"
+          export SECOND_BRAIN_NAME="CI Bash"
+          export SECOND_BRAIN_VAULT="$test_root/Vault With Spaces"
+          bash -n install.sh update.sh uninstall.sh scripts/*.sh
+          ./install.sh
+          ./scripts/verify.sh
+          ./update.sh
+          ./uninstall.sh
+          test -f "$SECOND_BRAIN_VAULT/Templates/Project.md"
+
+  powershell:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test PowerShell lifecycle
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $testRoot = Join-Path $env:RUNNER_TEMP 'second-brain-test'
+          $bin = Join-Path $testRoot 'bin'
+          $home = Join-Path $testRoot 'home'
+          $vault = Join-Path $testRoot 'Vault With Spaces [CI]'
+          New-Item -ItemType Directory -Force -Path @($bin, $home, $vault) | Out-Null
+          Set-Content -LiteralPath (Join-Path $bin 'opencode.cmd') -Value '@exit /b 0' -Encoding Ascii
+          $env:PATH = "$bin;$env:PATH"
+          $env:HOME = $home
+          $env:XDG_CONFIG_HOME = Join-Path $home '.config'
+          $env:SECOND_BRAIN_NAME = 'CI PowerShell'
+          $env:SECOND_BRAIN_VAULT = $vault
+          .\install.ps1
+          .\scripts\verify.ps1
+          .\update.ps1
+          .\uninstall.ps1
+          if (-not (Test-Path -LiteralPath (Join-Path $vault 'Templates\Project.md'))) {
+            throw 'Vault templates were removed during uninstall.'
+          }

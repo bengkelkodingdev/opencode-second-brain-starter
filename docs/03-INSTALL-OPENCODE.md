@@ -10,24 +10,21 @@ OpenCode berubah dari waktu ke waktu. Gunakan dokumentasi resmi untuk perintah i
 
 Sebelum mengeksekusi perintah instalasi, baca perintah yang tercantum di dokumentasi resmi saat ini. Periksa domain, isi perintah, prasyarat, dan platform yang didukung.
 
-## Windows: gunakan WSL
+## Windows native
 
-Panduan ini mengharuskan pengguna Windows menjalankan OpenCode dari WSL, bukan PowerShell atau Command Prompt native.
+Panduan utama menjalankan OpenCode secara native dari PowerShell.
 
 Alur yang diharapkan:
 
 ```text
 Windows
 ├── Obsidian native Windows
-└── WSL
-    ├── OpenCode
-    ├── Git dan alat pengembangan
-    └── source code di /home/<user>/code
+├── OpenCode native
+├── Git dan alat pengembangan native
+└── source code di C:\Users\<user>\source
 ```
 
-Jika WSL belum tersedia, ikuti dokumentasi Microsoft untuk [menginstal WSL](https://learn.microsoft.com/windows/wsl/install), lalu selesaikan pembuatan pengguna Linux sebelum memasang OpenCode.
-
-Jalankan seluruh langkah OpenCode berikut dari terminal WSL. Jangan mencampur instalasi Windows native dan instalasi WSL.
+Pilih metode Windows pada dokumentasi resmi OpenCode, lalu jalankan instalasi, autentikasi, dan OpenCode dari PowerShell.
 
 ## Instalasi
 
@@ -70,7 +67,16 @@ PROVIDER_API_KEY=sk-nilai-rahasia-sebenarnya
 
 ## Menjalankan dari source code
 
-Setelah instalasi dan autentikasi berhasil, masuk ke repository aplikasi, lalu mulai OpenCode menurut dokumentasi resminya. Contoh direktori:
+Setelah instalasi dan autentikasi berhasil, masuk ke repository aplikasi, lalu mulai OpenCode menurut dokumentasi resminya.
+
+Windows PowerShell:
+
+```powershell
+Set-Location "C:\Users\Ayu\source\project"
+opencode
+```
+
+Linux:
 
 ```bash
 cd /home/ayu/code/toko-api
@@ -86,6 +92,10 @@ opencode
 
 OpenCode sebaiknya dimulai dari repository atau direktori kerja yang relevan agar konteks filesystem jelas. Vault tetap terpisah.
 
+## WSL opsional
+
+Jika Anda sengaja memilih WSL, ikuti metode instalasi Linux resmi di dalam WSL dan gunakan path Linux untuk vault maupun `code_paths`. Jangan mencampur instalasi native Windows dan WSL dalam satu alur kerja. WSL adalah pilihan lanjutan, bukan persyaratan panduan ini.
+
 ## Pembaruan
 
 Gunakan metode pembaruan yang sesuai dengan metode instalasi Anda dan tercantum dalam dokumentasi resmi. Setelah pembaruan:
@@ -99,7 +109,7 @@ Gunakan metode pembaruan yang sesuai dengan metode instalasi Anda dan tercantum 
 ## Checklist
 
 - [ ] Instalasi mengikuti dokumentasi resmi terbaru.
-- [ ] Pengguna Windows menjalankan OpenCode di WSL.
+- [ ] Instalasi OpenCode sesuai dengan lingkungan yang benar: PowerShell native Windows atau Bash di Linux/macOS.
 - [ ] OpenCode dapat dijalankan dari terminal.
 - [ ] Provider sudah dikonfigurasi dengan metode resmi.
 - [ ] Tidak ada secret di vault atau repository dokumentasi.

@@ -41,7 +41,7 @@ Source code dicadangkan secara terpisah melalui remote Git, backup repository pr
 
 Dependency dan build artifact umumnya tidak perlu dimasukkan ke backup source code jika dapat dibuat ulang.
 
-Installer juga membuat backup konfigurasi yang disentuh di `~/.config/opencode/.second-brain-backups/`. Direktori ini dibuat dengan akses terbatas untuk pengguna saat installer berjalan. Karena konfigurasi lama mungkin berisi credential, jangan commit atau membagikan direktori backup tersebut. Tinjau dan hapus backup lama secara manual setelah instalasi stabil dan Anda yakin tidak memerlukannya untuk pemulihan.
+Installer juga membuat backup konfigurasi yang disentuh di direktori `.second-brain-backups` milik konfigurasi OpenCode. Lokasi umumnya `C:\Users\<user>\.config\opencode\.second-brain-backups\` di Windows atau `~/.config/opencode/.second-brain-backups/` di Linux/macOS. Di Linux/macOS installer membatasi izin melalui `umask`; di Windows perlindungan mengikuti ACL folder profil pengguna. Karena konfigurasi lama mungkin berisi credential, periksa ACL Windows jika komputer dipakai bersama, jangan commit atau membagikan direktori backup, dan hapus backup lama setelah instalasi stabil.
 
 ## Memilih sinkronisasi
 
@@ -54,7 +54,7 @@ Pilihan dapat berupa Obsidian Sync atau layanan sinkronisasi filesystem yang ses
 - batas ukuran dan jumlah file;
 - perilaku konflik;
 - kebijakan data perusahaan;
-- dukungan lintas Windows, Linux, WSL, dan macOS.
+- dukungan lintas Windows, Linux, dan macOS.
 
 Tidak ada layanan sinkronisasi yang diwajibkan oleh starter ini.
 
@@ -137,9 +137,9 @@ Batasi akses vault ke akun yang membutuhkannya. Pada komputer bersama:
 
 Di perangkat organisasi, ikuti kebijakan IT dan klasifikasi data yang berlaku.
 
-## WSL dan keamanan
+## WSL opsional dan keamanan
 
-Vault Windows yang diakses melalui `/mnt/c` tetap merupakan data pada drive Windows. Perlindungannya bergantung pada:
+Bagian ini hanya berlaku jika Anda sengaja menjalankan OpenCode di WSL. Vault Windows yang diakses melalui `/mnt/c` tetap merupakan data pada drive Windows. Perlindungannya bergantung pada:
 
 - akun Windows;
 - enkripsi drive;

@@ -79,7 +79,13 @@ Langkah aman:
 5. mulai sesi dari repository kedua;
 6. verifikasi proyek `FleetTrack` terdeteksi.
 
-Untuk memperoleh path direktori saat ini di Linux, WSL, atau macOS:
+Untuk memperoleh path direktori saat ini di Windows PowerShell:
+
+```powershell
+(Get-Location).Path
+```
+
+Di Linux atau macOS:
 
 ```bash
 pwd
@@ -87,17 +93,27 @@ pwd
 
 Salin hasil absolut yang terverifikasi, bukan asumsi.
 
-## Windows dan WSL
+## Windows native
 
-Jika seluruh repository berada di WSL:
+Gunakan path absolut Windows untuk seluruh repository yang dibaca OpenCode native:
 
 ```yaml
 code_paths:
-  - /home/ayu/code/fleettrack-api
-  - /home/ayu/code/fleettrack-web
+  - C:\Users\Ayu\source\fleettrack-api
+  - C:\Users\Ayu\source\fleettrack-web
 ```
 
-Jika satu repository masih berada di drive Windows:
+Jangan campur notasi dari lingkungan lain:
+
+```yaml
+code_paths:
+  - C:\Users\Ayu\source\fleettrack-api
+  - /home/ayu/source/fleettrack-web
+```
+
+## WSL opsional
+
+Jika Anda sengaja menjalankan OpenCode di WSL, seluruh nilai harus memakai format Linux:
 
 ```yaml
 code_paths:
@@ -105,15 +121,7 @@ code_paths:
   - /mnt/c/Users/Ayu/source/fleettrack-legacy
 ```
 
-Keduanya valid bagi OpenCode di WSL selama path benar. Namun, pertimbangkan performa tool pengembangan untuk repository di `/mnt/c`.
-
-Jangan campur notasi:
-
-```yaml
-code_paths:
-  - /home/ayu/code/fleettrack-api
-  - C:\Users\Ayu\source\fleettrack-legacy
-```
+Keduanya valid bagi OpenCode di WSL selama path benar. Pertimbangkan karakteristik performa tool pengembangan untuk repository di `/mnt/c`.
 
 ## Catatan lintas repository
 
@@ -143,14 +151,28 @@ Referensi baris cenderung berubah. Gunakan nama modul, simbol, atau kontrak yang
 
 ## Bekerja dari repository berbeda
 
-Sesi backend:
+Windows PowerShell, sesi backend:
+
+```powershell
+Set-Location "C:\Users\Ayu\source\fleettrack-api"
+opencode
+```
+
+Windows PowerShell, sesi frontend:
+
+```powershell
+Set-Location "C:\Users\Ayu\source\fleettrack-web"
+opencode
+```
+
+Linux atau macOS, sesi backend:
 
 ```bash
 cd /home/ayu/code/fleettrack-api
 opencode
 ```
 
-Sesi frontend:
+Linux atau macOS, sesi frontend:
 
 ```bash
 cd /home/ayu/code/fleettrack-web

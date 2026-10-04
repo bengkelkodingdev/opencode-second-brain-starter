@@ -8,7 +8,7 @@ Kumpulkan fakta berikut:
 
 ```text
 Sistem operasi:
-Lingkungan OpenCode: Linux / WSL / macOS
+Lingkungan OpenCode: Windows native / Linux / macOS
 Path vault menurut Obsidian:
 Path vault menurut shell OpenCode:
 Current working directory:
@@ -32,7 +32,7 @@ Langkah:
 1. Pastikan instalasi mengikuti [dokumentasi resmi OpenCode](https://opencode.ai/docs).
 2. Pastikan terminal baru sudah dibuka setelah instalasi.
 3. Pastikan metode instalasi sesuai sistem operasi dan shell.
-4. Di Windows, pastikan command dijalankan dalam WSL, bukan PowerShell.
+4. Di Windows native, buka PowerShell baru dan pastikan instalasi Windows tersedia pada `PATH`.
 5. Periksa petunjuk PATH pada dokumentasi resmi.
 6. Jangan memasang ulang dengan perintah dari tutorial lama.
 
@@ -48,7 +48,7 @@ Jawaban: ya, selama vault tersedia sebagai folder filesystem dan izin akses bena
 
 Jika OpenCode tidak dapat membaca saat Obsidian tertutup, periksa path, mount, izin, atau layanan sinkronisasi. Masalahnya bukan karena jendela Obsidian tertutup.
 
-## Vault tidak ditemukan di WSL
+## Vault tidak ditemukan di Windows native
 
 Contoh path Windows:
 
@@ -56,24 +56,18 @@ Contoh path Windows:
 C:\Users\Ayu\Documents\Second Brain
 ```
 
-Path WSL yang seharusnya:
+Uji path yang sama dari PowerShell:
 
-```text
-/mnt/c/Users/Ayu/Documents/Second Brain
-```
-
-Uji:
-
-```bash
-ls "/mnt/c/Users/Ayu/Documents/Second Brain"
+```powershell
+Test-Path "C:\Users\Ayu\Documents\Second Brain"
+Get-ChildItem "C:\Users\Ayu\Documents\Second Brain"
 ```
 
 Jika gagal:
 
 - periksa ejaan nama pengguna;
 - periksa huruf drive;
-- periksa kapitalisasi folder;
-- pastikan drive ter-mount di WSL;
+- pastikan akun Windows memiliki izin akses;
 - pastikan path dengan spasi dikutip;
 - pastikan vault tidak sebenarnya berada di OneDrive atau lokasi lain.
 
@@ -81,12 +75,6 @@ Contoh OneDrive dapat terlihat seperti:
 
 ```text
 C:\Users\Ayu\OneDrive\Documents\Second Brain
-```
-
-yang dari WSL menjadi:
-
-```text
-/mnt/c/Users/Ayu/OneDrive/Documents/Second Brain
 ```
 
 Gunakan lokasi aktual, jangan menebak.
@@ -101,23 +89,35 @@ Gejala:
 
 Pastikan nilai berupa path absolut.
 
-Benar di WSL:
+Benar di Windows native:
 
 ```yaml
 code_paths:
-  - /home/ayu/code/toko-api
+  - C:\Users\Ayu\source\project
 ```
 
-Salah di WSL:
+Benar di Linux:
+
+```yaml
+code_paths:
+  - /home/ayu/source/project
+```
+
+Salah:
 
 ```yaml
 code_paths:
   - ~/code/toko-api
   - ../toko-api
-  - C:\Users\Ayu\code\toko-api
 ```
 
-Masuk ke repository dan jalankan:
+Masuk ke repository. Di Windows PowerShell, jalankan:
+
+```powershell
+(Get-Location).Path
+```
+
+Di Linux atau macOS:
 
 ```bash
 pwd
@@ -137,7 +137,7 @@ Kemungkinan penyebab:
 
 Langkah:
 
-1. catat current working directory dengan `pwd`;
+1. catat current working directory dengan `(Get-Location).Path` di PowerShell atau `pwd` di Bash;
 2. cari proyek yang memiliki `code_paths` tersebut;
 3. pastikan hanya satu proyek yang semestinya cocok;
 4. ganti path luas seperti `/home/ayu/code` menjadi repository spesifik;
@@ -146,7 +146,13 @@ Langkah:
 
 ## Repository ada, tetapi tidak dapat diakses
 
-Periksa:
+Periksa di Windows PowerShell:
+
+```powershell
+Test-Path "C:\path\absolut\repository"
+```
+
+Di Linux atau macOS:
 
 ```bash
 ls "/path/absolut/repository"
@@ -157,7 +163,6 @@ Kemungkinan penyebab:
 - typo pada path;
 - izin filesystem;
 - drive eksternal belum terpasang;
-- mount WSL belum tersedia;
 - repository telah diganti nama;
 - akun pengguna berbeda;
 - symbolic link rusak.
@@ -188,7 +193,15 @@ Panduan ini tidak mengklaim perilaku internal command. Definisi aktual pada inst
 
 ## Installer noninteraktif tidak membaca environment variable
 
-Variabel yang diharapkan jika didukung:
+Variabel yang diharapkan jika didukung. Windows PowerShell:
+
+```powershell
+$env:SECOND_BRAIN_NAME = "Ayu"
+$env:SECOND_BRAIN_VAULT = "C:\Users\Ayu\Documents\Second Brain"
+.\install.ps1
+```
+
+Linux atau macOS:
 
 ```bash
 export SECOND_BRAIN_NAME="Ayu"
@@ -226,25 +239,49 @@ Ini biasanya terjadi setelah vault dipindahkan tetapi konfigurasi belum diperbar
 1. Hentikan sesi yang sedang menulis.
 2. Backup kedua lokasi.
 3. Tentukan vault yang menjadi sumber kebenaran.
-4. Dari repository starter, jalankan `./uninstall.sh`; vault dan catatan tidak dihapus.
-5. Jalankan kembali `install.sh` dengan `SECOND_BRAIN_NAME` dan `SECOND_BRAIN_VAULT` yang menunjuk lokasi baru.
+4. Dari repository starter, jalankan `.\uninstall.ps1` di Windows atau `./uninstall.sh` di Linux/macOS; vault dan catatan tidak dihapus.
+5. Jalankan kembali `install.ps1` atau `install.sh` dengan `SECOND_BRAIN_NAME` dan `SECOND_BRAIN_VAULT` yang menunjuk lokasi baru.
 6. Jika konfigurasi OpenCode tidak dikelola installer, perbarui permission path lama secara manual.
 7. Restart OpenCode dan uji dengan perubahan kecil.
 8. Gabungkan catatan yang terpisah secara manual dan hati-hati.
 9. Hapus vault lama hanya setelah verifikasi.
 
-## Performa lambat di Windows
+## Performa lambat di Windows native
 
-Jika source code berada di `/mnt/c`, operasi dengan banyak file dapat lebih lambat dibanding filesystem Linux WSL.
+Periksa apakah antivirus, indexing, sinkronisasi cloud, atau lokasi network memindai direktori dengan banyak dependency dan build artifact.
 
 Struktur yang disarankan:
 
 ```text
-Vault:       /mnt/c/Users/Ayu/Documents/Second Brain
-Source code: /home/ayu/code/toko-api
+Vault:       C:\Users\Ayu\Documents\Second Brain
+Source code: C:\Users\Ayu\source\project
 ```
 
-Obsidian native Windows tetap mudah mengakses vault, sedangkan Git dan build tools bekerja pada filesystem WSL. Jangan memindahkan source code ke vault untuk mengatasi performa.
+Tambahkan pengecualian keamanan hanya jika kebijakan organisasi mengizinkan dan Anda memahami risikonya. Jangan memindahkan source code ke vault untuk mengatasi performa.
+
+## WSL opsional
+
+Gunakan bagian ini hanya jika Anda sengaja menjalankan OpenCode di WSL. Jangan menerapkan pemeriksaan ini pada instalasi Windows native.
+
+Vault Windows berikut:
+
+```text
+C:\Users\Ayu\Documents\Second Brain
+```
+
+terlihat dari WSL sebagai:
+
+```text
+/mnt/c/Users/Ayu/Documents/Second Brain
+```
+
+Uji dari Bash di WSL:
+
+```bash
+ls "/mnt/c/Users/Ayu/Documents/Second Brain"
+```
+
+Jika gagal, periksa huruf drive, ejaan, mount WSL, lokasi OneDrive, dan tanda kutip untuk spasi. `code_paths` yang dibaca OpenCode di WSL juga harus memakai format Linux, misalnya `/home/ayu/source/project` atau `/mnt/c/Users/Ayu/source/project`. Operasi dengan banyak file di `/mnt/c` dapat lebih lambat daripada filesystem Linux WSL.
 
 ## Konflik sinkronisasi
 
@@ -306,7 +343,7 @@ Jangan merombak field lain tanpa membaca template aktual starter.
 
 Sertakan:
 
-- sistem operasi dan apakah memakai WSL;
+- sistem operasi dan lingkungan yang menjalankan OpenCode;
 - versi OpenCode dari mekanisme resmi;
 - langkah reproduksi;
 - pesan error lengkap yang sudah disensor;
@@ -326,7 +363,7 @@ Jangan sertakan:
 ## Checklist akhir
 
 - [ ] Path diperiksa dari shell yang menjalankan OpenCode.
-- [ ] Path WSL digunakan untuk Windows.
+- [ ] Format path sesuai lingkungan yang menjalankan OpenCode.
 - [ ] `code_paths` absolut dan spesifik.
 - [ ] Tidak ada folder proyek duplikat.
 - [ ] Definisi command starter diperiksa dari instalasi aktual.

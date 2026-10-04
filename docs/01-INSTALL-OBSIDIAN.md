@@ -23,14 +23,14 @@ Gunakan installer dari [situs resmi Obsidian](https://obsidian.md/download). Hin
 4. Selesaikan proses instalasi dengan pilihan standar.
 5. Jalankan Obsidian dari Start Menu.
 
-Panduan ini menggunakan dua lingkungan di Windows:
+Panduan utama menggunakan aplikasi native Windows:
 
 | Kebutuhan | Lingkungan |
 | --- | --- |
 | Membuka dan mengedit vault secara visual | Obsidian native Windows |
-| Menjalankan OpenCode dan alat pengembangan | WSL |
+| Menjalankan OpenCode dan alat pengembangan | Windows native melalui PowerShell |
 
-Jangan memasang Obsidian di dalam WSL. Aplikasi Windows dapat membuka vault di drive `C:` secara langsung, sedangkan OpenCode di WSL mengakses folder yang sama melalui `/mnt/c`.
+Obsidian dan OpenCode native dapat menggunakan path Windows yang sama, misalnya `C:\Users\Ayu\Documents\Second Brain`.
 
 ### Verifikasi
 
@@ -109,7 +109,7 @@ Community Plugin tidak diperlukan. Mulailah tanpa plugin agar konfigurasi sederh
 
 - [ ] Obsidian diunduh dari sumber resmi.
 - [ ] Aplikasi dapat dibuka.
-- [ ] Pengguna Windows memahami bahwa Obsidian berjalan native dan OpenCode berjalan melalui WSL.
+- [ ] Pengguna Windows dapat membuka Obsidian dan PowerShell secara native.
 - [ ] Belum ada source code yang dipindahkan ke vault.
 
-Berikutnya: [02 - Membuat Satu Vault dan Pemetaan Path WSL](02-CREATE-VAULT.md).
+Berikutnya: [02 - Membuat Satu Vault dan Memahami Path Native](02-CREATE-VAULT.md).

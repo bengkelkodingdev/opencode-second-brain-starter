@@ -23,7 +23,17 @@ Jika jawabannya ya, gunakan satu folder proyek walaupun repository lebih dari sa
 
 ## Proyek pertama
 
-Misalnya Anda memiliki repository:
+Di Windows native, misalnya Anda memiliki repository `C:\Users\Ayu\source\project`. Verifikasi dan mulai OpenCode dari PowerShell:
+
+```powershell
+Test-Path "C:\Users\Ayu\source\project"
+Set-Location "C:\Users\Ayu\source\project"
+opencode
+```
+
+Gunakan `C:\Users\Ayu\source\project` sebagai nilai `code_paths` ketika diminta.
+
+Contoh berikut menunjukkan alur yang sama di Linux. Misalnya Anda memiliki repository:
 
 ```text
 /home/ayu/code/kasir-api
@@ -107,26 +117,32 @@ code_paths:
   - /Users/budi/Developer/client-portal
 ```
 
-Contoh Windows dengan OpenCode di WSL dan repository di filesystem WSL:
+Contoh Windows native:
 
 ```yaml
 code_paths:
-  - /home/budi/code/client-portal
+  - C:\Users\Ayu\source\project
 ```
 
-Contoh Windows dengan repository lama masih di drive C, walaupun untuk performa pengembangan mungkin kurang ideal:
+Aturan platformnya sederhana: format vault dan `code_paths` harus mengikuti lingkungan yang menjalankan OpenCode. Path Windows native valid dan merupakan pilihan utama ketika OpenCode dijalankan dari PowerShell.
+
+## WSL opsional
+
+Jika Anda sengaja menjalankan OpenCode di WSL, gunakan format Linux. Repository di filesystem WSL dapat ditulis sebagai:
 
 ```yaml
 code_paths:
-  - /mnt/c/Users/Budi/source/client-portal
+  - /home/ayu/source/project
 ```
 
-Jangan gunakan path Windows native di metadata yang dibaca OpenCode WSL:
+Repository di drive Windows yang diakses dari WSL dapat ditulis sebagai:
 
 ```yaml
 code_paths:
-  - C:\Users\Budi\source\client-portal
+  - /mnt/c/Users/Ayu/source/project
 ```
+
+Jangan gunakan `C:\Users\Ayu\source\project` dalam metadata yang dibaca OpenCode di WSL.
 
 ## Memilih nama folder proyek
 
@@ -195,7 +211,7 @@ Jika path repository berada di bawah path yang terdaftar, deteksi mungkin bergan
 - [ ] Satu proyek logis memiliki satu folder tingkat teratas.
 - [ ] Source code tetap di luar vault.
 - [ ] `code_paths` berisi path absolut yang benar.
-- [ ] Format WSL digunakan untuk sesi OpenCode di Windows.
+- [ ] Format path sesuai lingkungan yang menjalankan OpenCode.
 - [ ] Konteks awal berisi fakta terverifikasi.
 - [ ] Tidak ada secret atau data sensitif.
 - [ ] Deteksi diuji dari repository yang sebenarnya.

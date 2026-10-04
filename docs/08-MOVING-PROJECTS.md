@@ -112,9 +112,9 @@ SECOND_BRAIN_VAULT="/home/ayu/Notes/Second Brain" \
 8. pastikan catatan baru ditulis ke lokasi baru, bukan membuat vault kedua di lokasi lama;
 9. simpan backup hingga verifikasi selesai.
 
-Jangan menjalankan `install.sh` langsung sebelum uninstall karena manifest instalasi lama memang mencegah instalasi ganda.
+Jangan menjalankan installer langsung sebelum uninstall karena manifest instalasi lama memang mencegah instalasi ganda. Gunakan pasangan `.ps1` di Windows atau pasangan `.sh` di Linux/macOS.
 
-## Memindahkan vault Windows
+## Memindahkan vault Windows native
 
 Jika vault berpindah dari:
 
@@ -128,19 +128,27 @@ ke:
 D:\Notes\Second Brain
 ```
 
-path WSL berubah dari:
+Jalankan migrasi dari root repository starter di PowerShell:
 
-```text
-/mnt/c/Users/Ayu/Documents/Second Brain
+```powershell
+.\uninstall.ps1
+$env:SECOND_BRAIN_NAME = "Ayu"
+$env:SECOND_BRAIN_VAULT = "D:\Notes\Second Brain"
+.\install.ps1
+.\scripts\verify.ps1
 ```
 
-menjadi:
+Jika execution policy memblokir salah satu skrip, jalankan skrip tersebut dengan pola berikut:
 
-```text
-/mnt/d/Notes/Second Brain
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-Perbarui konfigurasi yang dibaca OpenCode dengan format WSL. Obsidian native membuka path `D:\Notes\Second Brain`.
+Perbarui permission OpenCode native dari path lama ke `D:\Notes\Second Brain` jika konfigurasi tidak dikelola installer. Path vault dan `code_paths` tetap menggunakan format Windows native.
+
+### WSL opsional
+
+Jika OpenCode memang dijalankan di WSL, perpindahan yang sama mengubah path vault dari `/mnt/c/Users/Ayu/Documents/Second Brain` menjadi `/mnt/d/Notes/Second Brain`. Gunakan `./uninstall.sh`, `./install.sh`, dan `./scripts/verify.sh` dari WSL. Jangan memakai format tersebut untuk OpenCode native Windows.
 
 ## Pindah ke komputer baru
 
@@ -164,7 +172,15 @@ Jangan menyalin credential mentah melalui vault. Autentikasi ulang lebih aman.
 
 ## Verifikasi path
 
-Di repository baru:
+Di Windows PowerShell, periksa repository dan vault:
+
+```powershell
+(Get-Location).Path
+Test-Path "C:\path\absolut\repository"
+Test-Path "C:\path\absolut\vault"
+```
+
+Di Linux atau macOS, periksa repository baru:
 
 ```bash
 pwd
@@ -190,7 +206,7 @@ Gunakan tanda kutip untuk path dengan spasi.
 - [ ] Proses yang menulis file dihentikan.
 - [ ] `code_paths` diperbarui ke path absolut baru.
 - [ ] Referensi path lama diperiksa.
-- [ ] Format WSL digunakan pada Windows.
+- [ ] Format path sesuai lingkungan yang menjalankan OpenCode.
 - [ ] Obsidian membuka vault baru.
 - [ ] OpenCode diuji dari source code baru.
 - [ ] Lokasi lama belum dihapus sebelum verifikasi.

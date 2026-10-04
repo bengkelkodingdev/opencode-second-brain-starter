@@ -55,6 +55,7 @@ while IFS=$'\t' read -r kind path; do
   [ "$kind" = file ] || continue
   file_count=$((file_count + 1))
   if [ -f "$path" ]; then
+    grep -Fq "$COMMAND_MARKER" "$path" || check_failure "Managed command marker is missing: $path"
     grep -Fq '{{VAULT_PATH}}' "$path" && check_failure "Unrendered vault placeholder in $path"
     grep -Fq '{{USER_NAME}}' "$path" && check_failure "Unrendered user placeholder in $path"
   else

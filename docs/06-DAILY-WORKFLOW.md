@@ -32,7 +32,14 @@ Sebelum menjalankan:
 4. pastikan belum ada folder proyek duplikat;
 5. pastikan vault dapat diakses.
 
-Contoh sesi:
+Windows PowerShell:
+
+```powershell
+Set-Location "C:\Users\Ayu\source\project"
+opencode
+```
+
+Linux atau macOS:
 
 ```bash
 cd /home/ayu/code/kasir-api
@@ -52,6 +59,15 @@ Setelah selesai, verifikasi hasil secara manual. Jangan berasumsi command membua
 Gunakan pada awal sesi kerja, terutama setelah berpindah proyek atau kembali setelah beberapa hari.
 
 Contoh:
+
+Windows PowerShell:
+
+```powershell
+Set-Location "C:\Users\Ayu\source\project"
+opencode
+```
+
+Linux atau macOS:
 
 ```bash
 cd /home/ayu/code/kasir-api
@@ -164,6 +180,8 @@ Command memeriksa path lama, mencari kandidat lokasi aktual, dan menampilkan per
 
 ## Ritme kerja yang disarankan
 
+Semua path yang digunakan dalam sesi harus memakai format native lingkungan OpenCode: `C:\...` di Windows native, `/home/...` di Linux, atau `/Users/...` di macOS.
+
 ### Awal hari
 
 1. Masuk ke repository yang akan dikerjakan.
@@ -196,6 +214,15 @@ Command memeriksa path lama, mencari kandidat lokasi aktual, dan menampilkan per
 5. Audit data sensitif dan konflik sinkronisasi.
 
 ## Contoh satu hari lengkap
+
+Windows PowerShell:
+
+```powershell
+Set-Location "C:\Users\Ayu\source\toko-api"
+opencode
+```
+
+Linux atau macOS:
 
 ```bash
 cd /home/ayu/code/toko-api

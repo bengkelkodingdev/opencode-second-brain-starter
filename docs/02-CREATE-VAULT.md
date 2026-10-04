@@ -1,4 +1,4 @@
-# 02 - Membuat Satu Vault dan Pemetaan Path WSL
+# 02 - Membuat Satu Vault dan Memahami Path Native
 
 Gunakan satu vault untuk semua proyek. Di dalamnya, setiap proyek logis mendapatkan tepat satu folder tingkat teratas.
 
@@ -50,31 +50,32 @@ Contoh lokasi:
 
 | Sistem | Path vault |
 | --- | --- |
-| Windows di Obsidian | `C:\Users\Ayu\Documents\Second Brain` |
-| Windows yang sama dari WSL | `/mnt/c/Users/Ayu/Documents/Second Brain` |
+| Windows native | `C:\Users\Ayu\Documents\Second Brain` |
 | Linux | `/home/ayu/Documents/Second Brain` |
 | macOS | `/Users/ayu/Documents/Second Brain` |
 
-Spasi pada nama `Second Brain` valid. Di shell, selalu beri tanda kutip:
+Spasi pada nama `Second Brain` valid. Di shell, selalu beri tanda kutip.
+
+Windows PowerShell:
+
+```powershell
+Get-ChildItem "C:\Users\Ayu\Documents\Second Brain"
+```
+
+Linux atau macOS:
 
 ```bash
 ls "/home/ayu/Documents/Second Brain"
 ```
 
-## Windows: pemetaan path WSL
+## Windows native
 
-OpenCode dijalankan di WSL, sedangkan Obsidian dijalankan native di Windows. Keduanya mengakses folder fisik yang sama menggunakan notasi path berbeda.
+Jalankan Obsidian dan OpenCode secara native. Keduanya menggunakan notasi path Windows yang sama.
 
-### Rumus pemetaan
+### Path vault
 
 ```text
 C:\Users\Ayu\Documents\Second Brain
-```
-
-menjadi:
-
-```text
-/mnt/c/Users/Ayu/Documents/Second Brain
 ```
 
 Contoh drive lain:
@@ -83,54 +84,56 @@ Contoh drive lain:
 D:\Catatan\Second Brain
 ```
 
-menjadi:
+Perhatikan hal berikut:
 
-```text
-/mnt/d/Catatan/Second Brain
-```
+- sertakan huruf drive dan gunakan path absolut;
+- gunakan backslash `\`;
+- path yang mengandung spasi harus dikutip di PowerShell;
+- gunakan path aktual, termasuk `OneDrive`, jika folder Documents diarahkan ke sana.
 
-Perhatikan perubahan berikut:
+### Verifikasi dari PowerShell
 
-- huruf drive menjadi folder huruf kecil di bawah `/mnt`;
-- backslash `\` menjadi slash `/`;
-- kapitalisasi nama folder harus ditulis secara konsisten;
-- path yang mengandung spasi harus dikutip di shell.
+Buka PowerShell, kemudian periksa folder:
 
-### Verifikasi dari WSL
-
-Buka terminal WSL, kemudian periksa folder:
-
-```bash
-ls "/mnt/c/Users/Ayu/Documents/Second Brain"
+```powershell
+Test-Path "C:\Users\Ayu\Documents\Second Brain"
+Get-ChildItem "C:\Users\Ayu\Documents\Second Brain"
 ```
 
 Jika nama pengguna Windows mengandung spasi, tetap kutip seluruh path:
 
-```bash
-ls "/mnt/c/Users/Ayu Putri/Documents/Second Brain"
+```powershell
+Test-Path "C:\Users\Ayu Putri\Documents\Second Brain"
 ```
 
 ### Lokasi source code di Windows
 
-Untuk performa Git, package manager, watcher, dan build tools, source code umumnya lebih baik berada di filesystem Linux WSL:
+Simpan source code di folder terpisah dari vault, misalnya:
 
 ```text
-/home/ayu/code/toko-api
+C:\Users\Ayu\source\project
 ```
 
 Jangan menaruh source code di dalam:
 
 ```text
-/mnt/c/Users/Ayu/Documents/Second Brain
+C:\Users\Ayu\Documents\Second Brain
 ```
 
-Vault boleh berada di drive Windows agar mudah dibuka Obsidian native. Pemisahan ini memang disengaja.
+Keduanya boleh berada di drive Windows yang sama; yang penting source code bukan anak folder vault.
 
 ## Memahami `code_paths`
 
 Setiap proyek mencatat repository terkait dalam `code_paths`. Gunakan path absolut, bukan path relatif.
 
-Benar di Linux atau WSL:
+Benar di Windows native:
+
+```yaml
+code_paths:
+  - C:\Users\Ayu\source\project
+```
+
+Benar di Linux:
 
 ```yaml
 code_paths:
@@ -151,22 +154,30 @@ Salah:
 code_paths:
   - ../code/toko-api
   - ~/code/toko-web
-  - C:\Users\Ayu\code\toko-api
 ```
 
 Alasannya:
 
 - `../` bergantung pada direktori saat ini;
-- `~` perlu ekspansi shell dan bukan path absolut literal;
-- format `C:\...` tidak sesuai untuk OpenCode yang berjalan di WSL.
+- `~` perlu ekspansi shell dan bukan path absolut literal.
+
+## Aturan format path
+
+Path vault dan setiap nilai `code_paths` harus memakai format native lingkungan yang menjalankan OpenCode, bukan sekadar format sistem tempat folder terlihat di Obsidian:
+
+- OpenCode native Windows: `C:\Users\Ayu\source\project`;
+- OpenCode Linux: `/home/ayu/source/project`;
+- OpenCode macOS: `/Users/ayu/source/project`.
+
+Jangan mencampur format Windows `C:\...` dan format Unix `/home/...` dalam konfigurasi untuk satu lingkungan OpenCode.
 
 ## Uji akses dua arah
 
 1. Buat catatan uji di Obsidian, misalnya `uji.md`.
-2. Dari WSL, pastikan berkas terlihat:
+2. Dari shell yang menjalankan OpenCode, pastikan berkas terlihat. Di Windows PowerShell:
 
-```bash
-ls "/mnt/c/Users/Ayu/Documents/Second Brain/uji.md"
+```powershell
+Test-Path "C:\Users\Ayu\Documents\Second Brain\uji.md"
 ```
 
 3. Ubah isi catatan melalui Obsidian dan pastikan perubahan tersimpan.
@@ -174,11 +185,21 @@ ls "/mnt/c/Users/Ayu/Documents/Second Brain/uji.md"
 
 Tidak perlu menjalankan Obsidian saat melakukan langkah kedua. File tetap ada di disk.
 
+## WSL opsional
+
+Gunakan bagian ini hanya jika Anda sengaja menjalankan OpenCode di WSL. Dalam kondisi tersebut, format native lingkungan OpenCode adalah format Linux: vault Windows `C:\Users\Ayu\Documents\Second Brain` terlihat sebagai `/mnt/c/Users/Ayu/Documents/Second Brain`, dan repository sebaiknya menggunakan path seperti `/home/ayu/source/project`. Jalankan verifikasi dengan Bash:
+
+```bash
+ls "/mnt/c/Users/Ayu/Documents/Second Brain"
+```
+
+Jangan memasukkan path `C:\...` ke `code_paths` yang dibaca OpenCode di WSL.
+
 ## Checklist
 
 - [ ] Hanya ada satu vault second brain.
 - [ ] Lokasi vault diketahui dalam format path sistem operasi.
-- [ ] Pengguna Windows mengetahui path WSL untuk vault yang sama.
+- [ ] Path vault memakai format lingkungan yang menjalankan OpenCode.
 - [ ] Source code tetap di luar vault.
 - [ ] Setiap produk akan memiliki satu folder tingkat teratas.
 - [ ] Semua `code_paths` akan menggunakan path absolut.
